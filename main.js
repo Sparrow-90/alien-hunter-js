@@ -1,22 +1,50 @@
-const startBtn = document.querySelector('.start');
+const startBtn = document.querySelectorAll('.start');
 const welcomeBoard = document.querySelector('.welcome-board')
-startBtn.addEventListener('click',()=>{
-    welcomeBoard.style.zIndex = -1;
-    welcomeBoard.style.visibility = 'hidden'
-    startGame()
-} )
+const gameOver = document.querySelector('.game-over')
+
+let gameRunning = false;
+
+function resetGame() {
+    bullets.forEach((bullet) => bullet.remove());
+    bullets.length = 0;
+    enemies.forEach((enemy) => enemy.remove());
+    enemies.length = 0;
+    scoreNumber = 0;
+    livesNumber = 3;
+    score.innerText = scoreNumber;
+    lives.innerText = livesNumber;
+  }
+
+
+startBtn.forEach((btn)=>{
+    btn.addEventListener('click',()=>{
+        if (!gameRunning) { 
+
+            if (gameOver.style.visibility === 'visible') {
+                resetGame();
+              }
+
+            welcomeBoard.style.zIndex = -1;
+            welcomeBoard.style.visibility = 'hidden';
+            startGame();
+            gameOver.style.visibility = 'hidden';
+            gameRunning = true; 
+          }
+    } )
+})
+
+const playerElement = document.getElementById('player')
+const boardElement = document.getElementById('game-board')
+const bullets = [];
+const enemies = []
+const score = document.querySelector('.score-number');
+const lives = document.querySelector('.lives-number')
+
+let scoreNumber = 0;
+let livesNumber = 3;
 
 function startGame(){
 
-    const playerElement = document.getElementById('player')
-    const boardElement = document.getElementById('game-board')
-    const bullets = [];
-    const enemies = []
-    const score = document.querySelector('.score-number');
-    const lives = document.querySelector('.lives-number')
-    
-    let scoreNumber = 0;
-    let livesNumber = 3;
     
     const createBullet = ()=>{
         const bullet = document.createElement('div')
@@ -108,23 +136,25 @@ function startGame(){
     const moveEnemies = () =>{
         for(let i =0; i < enemies.length; i++ ){
             const enemy = enemies[i];
-            enemy.style.top = `${enemy.offsetTop + 5}px`;
+            enemy.style.top = `${enemy.offsetTop + 10}px`;
     
             if(enemy.offsetTop >= boardElement.offsetHeight){
                 enemies.splice(i, 1);
                 enemy.remove()
                 --livesNumber
-                 if(livesNumber === 0){
-                    alert('game over')
-                    location.reload()
-                }
             }
         }
+
         lives.innerText = livesNumber
+          
+        if(livesNumber === 0){
+            gameRunning = false;
+            gameOver.style.visibility = 'visible';
+       }
     }
     
     setInterval(moveBullet, 50);
-    setInterval(moveEnemies, 200);
+    setInterval(moveEnemies, 50);
     setInterval(createEnemy, 1000);
 }
 
