@@ -2,6 +2,12 @@ const playerElement = document.getElementById('player')
 const boardElement = document.getElementById('game-board')
 const bullets = [];
 const enemies = []
+const score = document.querySelector('.score-number');
+const lives = document.querySelector('.lives-number')
+
+let scoreNumber = 0;
+let livesNumber = 3;
+
 const createBullet = ()=>{
     const bullet = document.createElement('div')
     bullet.className = 'bullet';
@@ -15,7 +21,7 @@ const createBullet = ()=>{
 
 const handleKeyboard = (e)=>{
     const movePlayer = (direction)=>{
-        const newPosition = playerElement.offsetLeft + direction * 10;
+        const newPosition = playerElement.offsetLeft + direction * 35;
         const {left, right} = boardElement.getBoundingClientRect();
         const minLeft = player.offsetWidth/2
         const maxRight = right - left - minLeft
@@ -32,6 +38,30 @@ const handleKeyboard = (e)=>{
 
 
 window.addEventListener('keydown', handleKeyboard);
+const checkCollision = (bullet, enemy) =>{
+    return(bullet.left > enemy.left && bullet.right < enemy.right) && (bullet.top < enemy.bottom)
+}
+const chceckBulletCollision = (bullet) =>{
+    const position = bullet.getBoundingClientRect();
+    for(let i = 0; i< enemies.length; i++){
+        const enemy = enemies[i]
+        const enemyPosition = enemy.getBoundingClientRect();
+
+        if(checkCollision(position, enemyPosition)){
+            const idx = bullets.indexOf(bullet)
+            bullets.splice(idx, 1);
+            bullet.remove();
+
+            enemies.splice(i, 1);
+            enemy.remove()
+
+            ++scoreNumber
+            console.log(scoreNumber)
+            score.innerText= scoreNumber
+        }
+    }
+}
+
 
 const moveBullet = () =>{
     for(let i= 0; i < bullets.length; i++){
@@ -43,6 +73,8 @@ const moveBullet = () =>{
             bullets.splice(i, 1);
             i--;
             bullet.remove()
+        } else {
+            chceckBulletCollision(bullet)
         }
 
     }
@@ -56,7 +88,7 @@ createEnemy = () =>{
     const enemy = document.createElement('div');
     enemy.className = 'enemy';
     enemy.style.top = -40 + 'px';
-    enemy.style.left = `${Math.floor(Math.random() * (boardElement.offsetWidth - 60) + 60)}px`;
+    enemy.style.left = `${Math.floor(Math.random() * (boardElement.offsetWidth - 120) + 60)}px`;
     boardElement.appendChild(enemy);
     enemies.push(enemy);
 }
@@ -69,9 +101,15 @@ const moveEnemies = () =>{
         if(enemy.offsetTop >= boardElement.offsetHeight){
             enemies.splice(i, 1);
             enemy.remove()
-            alert('Koniec Gry')
+            --livesNumber
+            console.log(livesNumber)
+             if(livesNumber === 0){
+                alert('game over')
+                location.reload()
+            }
         }
     }
+    lives.innerText = livesNumber
 }
 
 setInterval(moveBullet, 50);
