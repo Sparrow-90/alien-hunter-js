@@ -148,13 +148,14 @@ function startGame(){
         lives.innerText = livesNumber
           
         if(livesNumber === 0){
+            clearInterval(enemiesInterval);
             gameRunning = false;
             gameOver.style.visibility = 'visible';
-       }
+        }
     }
-    
+    let enemiesInterval = setInterval(moveEnemies, 50);
     setInterval(moveBullet, 50);
-    setInterval(moveEnemies, 50);
     setInterval(createEnemy, 1000);
+    
 }
 
