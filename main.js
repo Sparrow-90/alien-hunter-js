@@ -1,7 +1,10 @@
 const startBtn = document.querySelectorAll('.start');
 const welcomeBoard = document.querySelector('.welcome-board')
 const gameOver = document.querySelector('.game-over')
-
+const fireEffect = document.getElementById('fire');
+const explosion = document.getElementById('explosion');
+const startAudio = document.getElementById('start');
+const lostLife = document.getElementById('lost-life')
 let gameRunning = false;
 
 function resetGame() {
@@ -18,6 +21,7 @@ function resetGame() {
 
 startBtn.forEach((btn)=>{
     btn.addEventListener('click',()=>{
+        startAudio.play()
         if (!gameRunning) { 
 
             if (gameOver.style.visibility === 'visible') {
@@ -54,6 +58,7 @@ function startGame(){
     
         boardElement.appendChild(bullet)
         bullets.push(bullet)
+        fireEffect.play()
     }
     
     
@@ -91,6 +96,7 @@ function startGame(){
                 bullet.remove();
                 enemy.style.backgroundImage='url(./img/boom.svg)'
                 enemies.splice(i, 1);
+                explosion.play()
                 setTimeout(()=>{
                     enemy.remove()
                 }, 1000)
@@ -142,6 +148,7 @@ function startGame(){
                 enemies.splice(i, 1);
                 enemy.remove()
                 --livesNumber
+                lostLife.play()
             }
         }
 
@@ -153,7 +160,7 @@ function startGame(){
             gameOver.style.visibility = 'visible';
         }
     }
-    let enemiesInterval = setInterval(moveEnemies, 50);
+    let enemiesInterval = setInterval(moveEnemies, 100);
     setInterval(moveBullet, 50);
     setInterval(createEnemy, 1000);
     
